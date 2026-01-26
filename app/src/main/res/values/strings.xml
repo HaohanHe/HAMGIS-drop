@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">HAMGIS Receiver</string>
+    <string name="title_receiver">HAMGIS Data Receiver</string>
+    <string name="status_label">Status: %s</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="status_connected">Connected to %s</string>
+    <string name="status_unknown">Unknown</string>
+    <string name="btn_start_server">Start Server</string>
+    <string name="btn_stop_server">Stop Server</string>
+    <string name="label_logs">Logs:</string>
+    <string name="msg_data_received">Data Received! Preparing Export...</string>
+    <string name="msg_file_saved">File Saved Successfully!</string>
+    <string name="msg_save_failed">Save Failed: %s</string>
+    <string name="err_convert">Error converting data: %s</string>
+    
+    <!-- Data Preview & Export -->
+    <string name="label_data_preview">Data Preview</string>
+    <string name="label_project_name">Project: %s</string>
+    <string name="label_data_size">Size: %s bytes</string>
+    <string name="btn_save_csv">Save as CSV</string>
+    <string name="btn_save_json">Save as JSON</string>
+    <string name="btn_save_geojson">Save as GeoJSON</string>
+    <string name="btn_save_kml">Save as KML</string>
+    <string name="btn_discard">Discard</string>
+    <string name="btn_help">User Guide</string>
+
+    <!-- CSV Headers -->
+    <string name="csv_header_summary">Name,Timestamp,Area (Mu),Points Count,Perimeter (m),Avg Altitude (m)</string>
+    <string name="csv_header_points">Index,Latitude,Longitude,Altitude (m),Time</string>
+    <string name="csv_section_points">--- Points Detail ---</string>
+    <string name="csv_unnamed">Unnamed</string>
+    
+    <!-- Logs -->
+    <string name="log_ble_not_enabled">Bluetooth not enabled</string>
+    <string name="log_adv_not_supported">BLE Advertising not supported</string>
+    <string name="log_server_stopped">Server stopped</string>
+    <string name="log_gatt_failed">Unable to create GATT server</string>
+    <string name="log_gatt_started">GATT Server started. Service added.</string>
+    <string name="log_adv_started">Advertising started...</string>
+    <string name="log_adv_success">Advertise success</string>
+    <string name="log_adv_failure">Advertise failure: %d</string>
+    <string name="log_device_connected">Device connected: %s</string>
+    <string name="log_device_disconnected">Device disconnected</string>
+    <string name="log_header_received">Header received. Expecting %1$d bytes, CRC: %2$s</string>
+    <string name="log_header_error">Error parsing header: %s</string>
+    <string name="log_eof_received">EOF received. Verifying...</string>
+    <string name="log_chunk_received">Received chunk: %1$d bytes (Total: %2$d/%3$s)</string>
+    <string name="log_err_no_header">Error: No header received</string>
+    <string name="log_err_length_mismatch">Error: Length mismatch. Expected %1$d, got %2$d</string>
+    <string name="log_crc_verified">CRC32 Verified! (%s)</string>
+    <string name="log_crc_mismatch">CRC32 Mismatch! Expected %1$s, got %2$s</string>
+    
+    <!-- Help Page -->
+    <string name="help_title">User Guide</string>
+    <string name="help_overview">Overview</string>
+    <string name="help_workflow">Workflow</string>
+    <string name="help_watch">Watch App</string>
+    <string name="help_phone">Phone App</string>
+    <string name="help_export">Export Function</string>
+    <string name="help_modes">Working Modes</string>
+    <string name="help_area_mode">Area Measurement Mode</string>
+    <string name="help_gis_mode">GIS Collection Mode</string>
+    <string name="help_data_sync">Data Sync</string>
+    <string name="help_troubleshooting">Troubleshooting</string>
+    
+    <string name="help_overview_content">HAMGIS is a complete geographic measurement system consisting of watch and phone components.</string>
+    <string name="help_watch_content">Watch app supports two working modes:\n\n1. Area Measurement Mode: Focused on farmland measurement, automatically calculates area and perimeter\n2. GIS Collection Mode: Professional version, can collect point, line, and polygon features simultaneously\n\nOperations:\n- Short press \"Collect\": Collect point\n- Short press \"Finish\": Complete current feature\n- Long press \"Finish\": Complete entire GIS project</string>
+    <string name="help_phone_content">Phone app serves as data reception and export center:\n\n1. Ensure Zepp App is running in background\n2. Phone automatically receives data after watch sends it\n3. Supports export to CSV, GeoJSON, KML, JSON formats\n4. JSON format optimized with complete project information</string>
+    <string name="help_export_content">Export format descriptions:\n\nCSV: Suitable for Excel viewing, includes project summary\nGeoJSON: Standard GIS format, supports ArcGIS, QGIS and other software\nKML: Google Earth format, includes coordinates and attributes\nJSON: Complete project data with formatted display</string>
+    <string name="help_modes_content">Mode switching:\n\nIn watch settings, you can switch application mode:\n- Area Measurement Mode: Suitable for quick farmland measurement\n- GIS Collection Mode: Suitable for professional field collection, one project can contain multiple feature types</string>
+    <string name="help_data_sync_content">Data sync workflow:\n\n1. Watch measurement → Click \"Export to Android\"\n2. Wait for phone to receive data (approximately 5-30 seconds)\n3. Phone displays data preview\n4. Select export format\n5. Select save location\n6. File saved successfully</string>
+    <string name="help_troubleshooting_content">Common issues:\n\nQ: Data not received?\nA: Check if Zepp App is running in background, ensure watch and phone connection is normal\n\nQ: Export failed?\nA: Ensure data format is correct, try resending data\n\nQ: JSON export format error?\nA: JSON formatting issue fixed, ensure exported JSON is valid</string>
+</resources>

@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">HAMGIS レシーバー</string>
+    <string name="title_receiver">HAMGIS データ受信機</string>
+    <string name="status_label">ステータス: %s</string>
+    <string name="status_disconnected">未接続</string>
+    <string name="status_connected">%s に接続済み</string>
+    <string name="status_unknown">不明</string>
+    <string name="btn_start_server">サーバー起動</string>
+    <string name="btn_stop_server">サーバー停止</string>
+    <string name="label_logs">ログ:</string>
+    <string name="msg_data_received">データを受信しました！エクスポート準備中...</string>
+    <string name="msg_file_saved">ファイルを保存しました！</string>
+    <string name="msg_save_failed">保存に失敗しました: %s</string>
+    <string name="err_convert">データ変換エラー: %s</string>
+    
+    <string name="label_data_preview">データプレビュー</string>
+    <string name="label_project_name">プロジェクト: %s</string>
+    <string name="label_data_size">サイズ: %s バイト</string>
+    <string name="btn_save_csv">CSVとして保存</string>
+    <string name="btn_save_json">JSONとして保存</string>
+    <string name="btn_save_geojson">GeoJSONとして保存</string>
+    <string name="btn_save_kml">KMLとして保存</string>
+    <string name="btn_discard">破棄</string>
+    <string name="btn_help">ユーザーガイド</string>
+
+    <string name="csv_header_summary">名前,タイムスタンプ,面積(畝),ポイント数,周囲長(m),平均高度(m)</string>
+    <string name="csv_header_points">番号,緯度,経度,高度(m),時間</string>
+    <string name="csv_section_points">--- ポイント詳細 ---</string>
+    <string name="csv_unnamed">名称未設定</string>
+    
+    <string name="log_ble_not_enabled">Bluetoothが無効です</string>
+    <string name="log_adv_not_supported">BLEアドバタイズはサポートされていません</string>
+    <string name="log_server_stopped">サーバーが停止しました</string>
+    <string name="log_gatt_failed">GATTサーバーを作成できません</string>
+    <string name="log_gatt_started">GATTサーバーが起動しました</string>
+    <string name="log_adv_started">アドバタイズを開始しました...</string>
+    <string name="log_adv_success">アドバタイズ成功</string>
+    <string name="log_adv_failure">アドバタイズ失敗: %d</string>
+    <string name="log_device_connected">デバイスが接続されました: %s</string>
+    <string name="log_device_disconnected">デバイスが切断されました</string>
+    <string name="log_header_received">ヘッダー受信。予想 %1$d バイト, CRC: %2$s</string>
+    <string name="log_header_error">ヘッダー解析エラー: %s</string>
+    <string name="log_eof_received">EOF受信。検証中...</string>
+    <string name="log_chunk_received">チャンク受信: %1$d バイト (合計: %2$d/%3$s)</string>
+    <string name="log_err_no_header">エラー: ヘッダーがありません</string>
+    <string name="log_err_length_mismatch">エラー: 長さが一致しません。予想 %1$d, 実際 %2$d</string>
+    <string name="log_crc_verified">CRC32 検証成功! (%s)</string>
+    <string name="log_crc_mismatch">CRC32 不一致！予想 %1$s, 実際 %2$s</string>
+    
+    <!-- Help Page -->
+    <string name="help_title">ユーザーガイド</string>
+    <string name="help_overview">概要</string>
+    <string name="help_workflow">ワークフロー</string>
+    <string name="help_watch">時計アプリ</string>
+    <string name="help_phone">スマホンアプリ</string>
+    <string name="help_export">エクスポート機能</string>
+    <string name="help_modes">動作モード</string>
+    <string name="help_area_mode">面積測定モード</string>
+    <string name="help_gis_mode">GIS収集モード</string>
+    <string name="help_data_sync">データ同期</string>
+    <string name="help_troubleshooting">トラブルシューティング</string>
+    
+    <string name="help_overview_content">HAMGISは時計とスマホンの2つの部分からなる完全な地理測定システムです。</string>
+    <string name="help_watch_content">時計アプリは2つの動作モードをサポート：\n\n1. 面積測定モード：農地測定に特化、面積と周囲長を自動計算\n2. GIS収集モード：プロフェッショナル版、点・線・面のフィーチャを同時に収集可能\n\n操作：\n- 短押し「採集」：点を収集\n- 短押し「完了」：現在のフィーチャを完了\n- 長押し「完了」：GISプロジェクト全体を完了</string>
+    <string name="help_phone_content">スマホンアプリはデータ受信とエクスポートの中心：\n\n1. Zeppアプリがバックグラウンドで実行されていること\n2. 時計からデータ送信後、スマホンが自動的に受信\n3. CSV、GeoJSON、KML、JSON形式でのエクスポートをサポート\n4. JSON形式が最適化され、完全なプロジェクト情報を含む</string>
+    <string name="help_export_content">エクスポート形式の説明：\n\nCSV：Excel表示に適し、プロジェクト概要を含む\nGeoJSON：標準GIS形式、ArcGIS、QGISなどのソフトウェアをサポート\nKML：Google Earth形式、座標と属性を含む\nJSON：完全なプロジェクトデータ、フォーマット表示</string>
+    <string name="help_modes_content">モード切替：\n\n時計の設定でアプリケーションモードを切替可能：\n- 面積測定モード：高速な農地測定に適\n- GIS収集モード：プロフェッショナルな外業収集に適、1プロジェクトで複数のフィーチャタイプを含む</string>
+    <string name="help_data_sync_content">データ同期ワークフロー：\n\n1. 時計測定 → 「Androidにエクスポート」をタップ\n2. スマホンのデータ受信を待機（約5-30秒）\n3. スマホンがデータプレビューを表示\n4. エクスポート形式を選択\n5. 保存場所を選択\n6. ファイル保存完了</string>
+    <string name="help_troubleshooting_content">よくある問題：\n\nQ: データが受信されない？\nA: Zeppアプリがバックグラウンドで実行されているか確認、時計とスマホンの接続が正常か確認\n\nQ: エクスポートに失敗？\nA: データ形式が正しいか確認、データを再送信\n\nQ: JSONエクスポート形式エラー？\nA: JSONフォーマット化問題が修正され、エクスポートされたJSONが有効か確認</string>
+</resources>
