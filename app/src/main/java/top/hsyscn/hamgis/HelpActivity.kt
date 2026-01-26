@@ -142,7 +142,10 @@ fun HelpSectionCard(
                 text = content,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFFCCCCCC),
-                lineHeight = 1.5.sp
+                lineHeight = 1.5.sp,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Start,
+                softWrap = true
             )
         }
     }
