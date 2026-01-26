@@ -92,7 +92,8 @@ class MainActivity : ComponentActivity() {
                             receivedJsonData = null
                         },
                         onHelp = {
-                            val intent = Intent(this@MainActivity, HelpActivity::class.java)
+                            val uri = android.net.Uri.parse("https://hsyscn.top/HAMGISdirections.html")
+                            val intent = Intent(Intent.ACTION_VIEW, uri)
                             startActivity(intent)
                         }
                     )
