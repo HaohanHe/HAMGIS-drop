@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -52,58 +53,74 @@ fun HelpScreen() {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // Overview
-            HelpSection(
-                title = context.getString(R.string.help_overview),
-                content = context.getString(R.string.help_overview_content)
-            )
+            item {
+                HelpSectionCard(
+                    title = context.getString(R.string.help_overview),
+                    content = context.getString(R.string.help_overview_content)
+                )
+            }
             
             // Workflow
-            HelpSection(
-                title = context.getString(R.string.help_workflow),
-                content = context.getString(R.string.help_data_sync_content)
-            )
+            item {
+                HelpSectionCard(
+                    title = context.getString(R.string.help_workflow),
+                    content = context.getString(R.string.help_data_sync_content)
+                )
+            }
             
             // Watch App
-            HelpSection(
-                title = context.getString(R.string.help_watch),
-                content = context.getString(R.string.help_watch_content)
-            )
+            item {
+                HelpSectionCard(
+                    title = context.getString(R.string.help_watch),
+                    content = context.getString(R.string.help_watch_content)
+                )
+            }
             
             // Phone App
-            HelpSection(
-                title = context.getString(R.string.help_phone),
-                content = context.getString(R.string.help_phone_content)
-            )
+            item {
+                HelpSectionCard(
+                    title = context.getString(R.string.help_phone),
+                    content = context.getString(R.string.help_phone_content)
+                )
+            }
             
             // Export Function
-            HelpSection(
-                title = context.getString(R.string.help_export),
-                content = context.getString(R.string.help_export_content)
-            )
+            item {
+                HelpSectionCard(
+                    title = context.getString(R.string.help_export),
+                    content = context.getString(R.string.help_export_content)
+                )
+            }
             
             // Working Modes
-            HelpSection(
-                title = context.getString(R.string.help_modes),
-                content = context.getString(R.string.help_modes_content)
-            )
+            item {
+                HelpSectionCard(
+                    title = context.getString(R.string.help_modes),
+                    content = context.getString(R.string.help_modes_content)
+                )
+            }
             
             // Data Sync
-            HelpSection(
-                title = context.getString(R.string.help_data_sync),
-                content = context.getString(R.string.help_data_sync_content)
-            )
+            item {
+                HelpSectionCard(
+                    title = context.getString(R.string.help_data_sync),
+                    content = context.getString(R.string.help_data_sync_content)
+                )
+            }
             
             // Troubleshooting
-            HelpSection(
-                title = context.getString(R.string.help_troubleshooting),
-                content = context.getString(R.string.help_troubleshooting_content)
-            )
+            item {
+                HelpSectionCard(
+                    title = context.getString(R.string.help_troubleshooting),
+                    content = context.getString(R.string.help_troubleshooting_content)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun HelpSection(
+fun HelpSectionCard(
     title: String,
     content: String
 ) {

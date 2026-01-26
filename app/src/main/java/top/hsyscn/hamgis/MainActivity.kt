@@ -9,11 +9,6 @@ import android.util.Log
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
-import android.os.Bundle
-import android.content.Intent
-import android.os.Bundle
-import android.content.Intent
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
