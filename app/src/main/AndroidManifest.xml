@@ -34,16 +34,15 @@
             </intent-filter>
         </activity>
         
+        <!-- HelpActivity (暂时注释掉，因为文件不存在) -->
+        <!-- 
         <activity
             android:name=".HelpActivity"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.HAMGIS">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
+        -->
     </application>
 
 </manifest>
