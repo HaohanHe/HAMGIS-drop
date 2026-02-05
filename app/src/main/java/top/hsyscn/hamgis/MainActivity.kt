@@ -816,11 +816,13 @@ fun HttpScreen(
                 Text(context.getString(R.string.btn_stop_server))
             }
             Spacer(modifier = Modifier.width(12.dp))
+            // 帮助按钮 - 看起来像禁用但实际上可点击
             Button(
                 onClick = onHelp,
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    containerColor = Color(0xFFAAAAAA), // 灰色，看起来像禁用的
+                    contentColor = Color(0xFF666666)    // 深灰色文字
                 )
             ) {
                 Text(context.getString(R.string.btn_help))

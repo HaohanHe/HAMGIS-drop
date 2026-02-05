@@ -18,6 +18,12 @@ class HttpServerManager(private val context: Context) : NanoHTTPD(8888) {
     var onDataReceived: ((String) -> Unit)? = null
 
     fun startServer() {
+        // 防呆：检查服务器是否已经在运行
+        if (isAlive) {
+            log("Server is already running, cannot start again")
+            return
+        }
+        
         try {
             start(30000, false)
             _serverState.value = "Running on port 8888"
