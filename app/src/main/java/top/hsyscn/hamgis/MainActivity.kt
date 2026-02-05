@@ -889,7 +889,7 @@ fun CuteHttpScreen(
                 "Logs", 
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = CuteText
+                    color = Color.White
                 )
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -1442,7 +1442,7 @@ fun CuteEmptyState() {
             Text(
                 text = "Waiting for data...",
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    color = CuteText.copy(alpha = 0.6f),
+                    color = Color.White,
                     fontWeight = FontWeight.Medium
                 )
             )
@@ -1450,7 +1450,7 @@ fun CuteEmptyState() {
             Text(
                 text = "Send data from your watch",
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = CuteText.copy(alpha = 0.4f)
+                    color = Color.White
                 )
             )
         }
