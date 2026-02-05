@@ -12,17 +12,37 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +56,20 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+// 可爱的配色方案
+val CutePink = Color(0xFFFF6B9D)
+val CutePinkLight = Color(0xFFFFB8D1)
+val CutePinkDark = Color(0xFFFF4081)
+val CuteBlue = Color(0xFF4FC3F7)
+val CuteBlueLight = Color(0xFFB3E5FC)
+val CutePurple = Color(0xFFB39DDB)
+val CutePurpleLight = Color(0xFFE1BEE7)
+val CuteYellow = Color(0xFFFFF176)
+val CuteGreen = Color(0xFF81C784)
+val CuteBackground = Color(0xFFFCE4EC)
+val CuteSurface = Color(0xFFFFFFFF)
+val CuteText = Color(0xFF4A4A4A)
+
 class MainActivity : ComponentActivity() {
     
     private lateinit var httpServerManager: HttpServerManager
@@ -43,8 +77,7 @@ class MainActivity : ComponentActivity() {
     private var pendingExportType: String = "csv" // or "json"
     private var receivedJsonData: String? = null // Store received data for export
 
-    // SAF: Crea
-    // te File
+    // SAF: Create File
     private val createFileLauncher = registerForActivityResult(ActivityResultContracts.CreateDocument("text/*")) { uri ->
         uri?.let {
             saveContentToUri(it, pendingExportContent ?: "")
@@ -79,7 +112,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HttpScreen(
+                    CuteHttpScreen(
                         httpServerManager = httpServerManager,
                         receivedJson = uiReceivedJson,
                         modifier = Modifier.padding(innerPadding),
@@ -743,7 +776,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun HttpScreen(
+fun CuteHttpScreen(
     httpServerManager: HttpServerManager,
     receivedJson: String?,
     modifier: Modifier = Modifier,
@@ -760,275 +793,756 @@ fun HttpScreen(
     val serverState by httpServerManager.serverState.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
 
-    Column(modifier = modifier.padding(16.dp)) {
-        // 标题区域
-        Text(
-            text = "HAMGIS HTTP Receiver", 
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
+    // 动画状态
+    val isRunning = serverState.contains("Running")
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulse"
+    )
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        CuteBackground,
+                        CutePinkLight.copy(alpha = 0.3f),
+                        CuteBlueLight.copy(alpha = 0.2f)
+                    )
+                )
+            )
+            .padding(16.dp)
+    ) {
+        // 可爱的标题区域
+        CuteHeader()
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // 状态卡片
+        CuteStatusCard(
+            isRunning = isRunning,
+            pulseScale = if (isRunning) pulseScale else 1f,
+            serverState = serverState
         )
-        Spacer(modifier = Modifier.height(12.dp))
         
-        // 状态显示
-        val isRunning = serverState.contains("Running")
-        
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Status:", 
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = serverState, 
-                style = MaterialTheme.typography.bodyLarge, 
-                color = if(isRunning) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
-            )
-        }
-        
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // 服务器控制按钮
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(
-                onClick = onStart,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Text(context.getString(R.string.btn_start_server))
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Button(
-                onClick = onStop,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
-            ) {
-                Text(context.getString(R.string.btn_stop_server))
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            // 帮助按钮 - 正常样式
-            Button(
-                onClick = onHelp,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiary,
-                    contentColor = MaterialTheme.colorScheme.onTertiary
-                )
-            ) {
-                Text(context.getString(R.string.btn_help))
-            }
-        }
+        CuteControlButtons(
+            isRunning = isRunning,
+            onStart = onStart,
+            onStop = onStop,
+            onHelp = onHelp
+        )
         
         // 数据预览区域
-        if (receivedJson != null) {
-            Spacer(modifier = Modifier.height(24.dp))
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Text(
-                        text = context.getString(R.string.label_data_preview), 
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    
-                    // 数据摘要
-                    var summaryText by remember(receivedJson) { mutableStateOf("") }
-                    var isGISProject by remember(receivedJson) { mutableStateOf(false) }
-                    var projectType by remember(receivedJson) { mutableStateOf("") }
-                    
-                    LaunchedEffect(receivedJson) {
-                         try {
-                             receivedJson?.let { json ->
-                                 val root = JSONObject(json)
-                                 val name = root.optString("name", "?")
-                                 val size = json.length
-                                 
-                                 // 检测项目类型
-                                 val recordType = root.optString("recordType", "")
-                                 isGISProject = recordType == "gis_project" || root.has("features")
-                                 projectType = if (isGISProject) "GIS Project" else "Area Measurement"
-                                 
-                                 // 构建摘要信息
-                                 val sb = StringBuilder()
-                                 sb.appendLine("${context.getString(R.string.label_project_name, name)}")
-                                 sb.appendLine("Type: $projectType")
-                                 
-                                 if (isGISProject) {
-                                     // GIS项目显示要素统计
-                                     val features = root.optJSONArray("features")
-                                     val featureCount = features?.length() ?: 0
-                                     val totalPoints = root.optInt("totalPoints", 0)
-                                     sb.appendLine("Features: $featureCount")
-                                     sb.appendLine("Total Points: $totalPoints")
-                                 } else {
-                                     // 测面积项目显示面积信息
-                                     val areaObj = root.optJSONObject("area")
-                                     val areaMu = areaObj?.optDouble("mu", 0.0) ?: 0.0
-                                     val points = root.optJSONArray("points")
-                                     val pointCount = points?.length() ?: 0
-                                     sb.appendLine("Area: ${String.format("%.2f", areaMu)} mu")
-                                     sb.appendLine("Points: $pointCount")
-                                 }
-                                 
-                                 sb.appendLine(context.getString(R.string.label_data_size, size.toString()))
-                                 summaryText = sb.toString()
-                             }
-                         } catch (e: Exception) {
-                             summaryText = "Error parsing JSON: ${e.message}"
-                         }
-                    }
-                    
-                    Text(
-                        text = summaryText, 
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    
-                    // 导出按钮网格
-                    Column {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Button(
-                                onClick = onSaveCsv,
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Text(context.getString(R.string.btn_save_csv))
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Button(
-                                onClick = onSaveGeoJson,
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Text(context.getString(R.string.btn_save_geojson))
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Button(
-                                onClick = onSaveKml,
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Text(context.getString(R.string.btn_save_kml))
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = onSaveJson,
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(context.getString(R.string.btn_save_json))
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        OutlinedButton(
-                            onClick = onDiscard, 
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error
-                            ),
-                            shape = RoundedCornerShape(8.dp)
-                        ) { 
-                            Text(context.getString(R.string.btn_discard)) 
-                        }
-                    }
-                }
+        AnimatedVisibility(
+            visible = receivedJson != null,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            Column {
+                Spacer(modifier = Modifier.height(16.dp))
+                CuteDataCard(
+                    receivedJson = receivedJson,
+                    context = context,
+                    onSaveCsv = onSaveCsv,
+                    onSaveJson = onSaveJson,
+                    onSaveGeoJson = onSaveGeoJson,
+                    onSaveKml = onSaveKml,
+                    onDiscard = onDiscard
+                )
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // 空状态提示
+        AnimatedVisibility(
+            visible = receivedJson == null,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            CuteEmptyState()
+        }
         
         // 日志标题
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                imageVector = Icons.Default.List,
+                contentDescription = null,
+                tint = CutePink,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
-                context.getString(R.string.label_logs), 
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                "Logs", 
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = CuteText
+                )
             )
             Spacer(modifier = Modifier.weight(1f))
-            Text(
-                "${logs.size} entries", 
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.outline
-            )
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = CutePurple.copy(alpha = 0.2f)
+            ) {
+                Text(
+                    "${logs.size} entries", 
+                    style = MaterialTheme.typography.bodySmall,
+                    color = CutePurple,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
         }
         
         Spacer(modifier = Modifier.height(8.dp))
         
         // 日志区域
-        Card(
+        CuteLogCard(
+            logs = logs,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+fun CuteHeader() {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = CuteSurface,
+            shadowElevation = 4.dp,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // 装饰图标
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "",
+                        fontSize = 24.sp
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Surface(
+                        shape = CircleShape,
+                        color = CutePink.copy(alpha = 0.2f),
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = null,
+                                tint = CutePink,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "",
+                        fontSize = 24.sp
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                Text(
+                    text = "HAMGIS Receiver",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = CutePink
+                    )
+                )
+                
+                Text(
+                    text = "Cute Data Collector",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = CutePurple
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CuteStatusCard(
+    isRunning: Boolean,
+    pulseScale: Float,
+    serverState: String
+) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = CuteSurface,
+        shadowElevation = 3.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-            shape = RoundedCornerShape(12.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // 状态指示器
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .scale(if (isRunning) pulseScale else 1f)
+                        .background(
+                            color = if (isRunning) CuteGreen else Color(0xFFFF5252),
+                            shape = CircleShape
+                        )
+                        .shadow(
+                            elevation = if (isRunning) 8.dp else 0.dp,
+                            shape = CircleShape,
+                            spotColor = if (isRunning) CuteGreen else Color.Transparent
+                        )
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = "Server Status",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CuteText.copy(alpha = 0.6f)
+                    )
+                    Text(
+                        text = serverState,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = if (isRunning) CuteGreen else Color(0xFFFF5252)
+                        )
+                    )
+                }
+            }
+            
+            // 状态图标
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = if (isRunning) CuteGreen.copy(alpha = 0.15f) else Color(0xFFFF5252).copy(alpha = 0.15f)
+            ) {
+                Icon(
+                    imageVector = if (isRunning) Icons.Default.CheckCircle else Icons.Default.Close,
+                    contentDescription = null,
+                    tint = if (isRunning) CuteGreen else Color(0xFFFF5252),
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CuteControlButtons(
+    isRunning: Boolean,
+    onStart: () -> Unit,
+    onStop: () -> Unit,
+    onHelp: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        CuteActionButton(
+            text = "Start",
+            icon = Icons.Default.PlayArrow,
+            color = CuteGreen,
+            onClick = onStart,
+            enabled = !isRunning,
+            modifier = Modifier.weight(1f)
+        )
+        
+        CuteActionButton(
+            text = "Stop",
+            icon = Icons.Default.Close,
+            color = Color(0xFFFF5252),
+            onClick = onStop,
+            enabled = isRunning,
+            modifier = Modifier.weight(1f)
+        )
+        
+        CuteActionButton(
+            text = "Help",
+            icon = Icons.Default.Info,
+            color = CuteBlue,
+            onClick = onHelp,
+            enabled = true,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+fun CuteActionButton(
+    text: String,
+    icon: ImageVector,
+    color: Color,
+    onClick: () -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        animationSpec = tween(100),
+        label = "scale"
+    )
+    
+    Surface(
+        onClick = {
+            isPressed = true
+            onClick()
+        },
+        enabled = enabled,
+        shape = RoundedCornerShape(14.dp),
+        color = if (enabled) color else color.copy(alpha = 0.3f),
+        shadowElevation = if (enabled) 4.dp else 0.dp,
+        modifier = modifier
+            .scale(scale)
+            .height(48.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = text,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+    
+    LaunchedEffect(isPressed) {
+        if (isPressed) {
+            kotlinx.coroutines.delay(100)
+            isPressed = false
+        }
+    }
+}
+
+@Composable
+fun CuteDataCard(
+    receivedJson: String?,
+    context: android.content.Context,
+    onSaveCsv: () -> Unit,
+    onSaveJson: () -> Unit,
+    onSaveGeoJson: () -> Unit,
+    onSaveKml: () -> Unit,
+    onDiscard: () -> Unit
+) {
+    var summaryText by remember(receivedJson) { mutableStateOf("") }
+    var isGISProject by remember(receivedJson) { mutableStateOf(false) }
+    var projectType by remember(receivedJson) { mutableStateOf("") }
+    var projectName by remember(receivedJson) { mutableStateOf("") }
+    
+    LaunchedEffect(receivedJson) {
+        try {
+            receivedJson?.let { json ->
+                val root = JSONObject(json)
+                val name = root.optString("name", "?")
+                projectName = name
+                val size = json.length
+                
+                // 检测项目类型
+                val recordType = root.optString("recordType", "")
+                isGISProject = recordType == "gis_project" || root.has("features")
+                projectType = if (isGISProject) "GIS Project" else "Area Measurement"
+                
+                // 构建摘要信息
+                val sb = StringBuilder()
+                
+                if (isGISProject) {
+                    // GIS项目显示要素统计
+                    val features = root.optJSONArray("features")
+                    val featureCount = features?.length() ?: 0
+                    val totalPoints = root.optInt("totalPoints", 0)
+                    sb.appendLine("Features: $featureCount")
+                    sb.appendLine("Total Points: $totalPoints")
+                } else {
+                    // 测面积项目显示面积信息
+                    val areaObj = root.optJSONObject("area")
+                    val areaMu = areaObj?.optDouble("mu", 0.0) ?: 0.0
+                    val points = root.optJSONArray("points")
+                    val pointCount = points?.length() ?: 0
+                    sb.appendLine("Area: ${String.format("%.2f", areaMu)} mu")
+                    sb.appendLine("Points: $pointCount")
+                }
+                
+                sb.appendLine("Size: $size bytes")
+                summaryText = sb.toString()
+            }
+        } catch (e: Exception) {
+            summaryText = "Error parsing JSON: ${e.message}"
+        }
+    }
+    
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = CuteSurface,
+        shadowElevation = 4.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            // 标题行
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = CutePink.copy(alpha = 0.2f),
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = null,
+                            tint = CutePink,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = "Data Received!",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = CutePink
+                        )
+                    )
+                    Text(
+                        text = projectType,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CutePurple
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // 项目信息
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = CuteBlueLight.copy(alpha = 0.3f),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Project: $projectName",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = CuteText
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = summaryText,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CuteText.copy(alpha = 0.8f)
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // 导出按钮
+            Text(
+                text = "Export Options",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = CuteText.copy(alpha = 0.6f)
+                ),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            
+            // 第一行导出按钮
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CuteExportButton(
+                    text = "CSV",
+                    icon = Icons.Default.List,
+                    color = CuteGreen,
+                    onClick = onSaveCsv,
+                    modifier = Modifier.weight(1f)
+                )
+                CuteExportButton(
+                    text = "GeoJSON",
+                    icon = Icons.Default.LocationOn,
+                    color = CuteBlue,
+                    onClick = onSaveGeoJson,
+                    modifier = Modifier.weight(1f)
+                )
+                CuteExportButton(
+                    text = "KML",
+                    icon = Icons.Default.LocationOn,
+                    color = CutePurple,
+                    onClick = onSaveKml,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // JSON 导出按钮
+            CuteExportButton(
+                text = "Save as JSON",
+                icon = Icons.Default.Info,
+                color = CutePink,
+                onClick = onSaveJson,
+                modifier = Modifier.fillMaxWidth()
+            )
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // 丢弃按钮
+            OutlinedButton(
+                onClick = onDiscard,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color(0xFFFF5252)
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Discard Data")
+            }
+        }
+    }
+}
+
+@Composable
+fun CuteExportButton(
+    text: String,
+    icon: ImageVector,
+    color: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        animationSpec = tween(100),
+        label = "scale"
+    )
+    
+    Button(
+        onClick = {
+            isPressed = true
+            onClick()
+        },
+        modifier = modifier
+            .scale(scale)
+            .height(44.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = color
+        ),
+        contentPadding = PaddingValues(horizontal = 8.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = text,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+    
+    LaunchedEffect(isPressed) {
+        if (isPressed) {
+            kotlinx.coroutines.delay(100)
+            isPressed = false
+        }
+    }
+}
+
+@Composable
+fun CuteEmptyState() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // 等待动画
+            val infiniteTransition = rememberInfiniteTransition(label = "float")
+            val offsetY by infiniteTransition.animateFloat(
+                initialValue = 0f,
+                targetValue = -10f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1500, easing = FastOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "float"
+            )
+            
+            Box(
+                modifier = Modifier.offset(y = offsetY.dp)
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = CuteBlueLight.copy(alpha = 0.4f),
+                    modifier = Modifier.size(80.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = null,
+                            tint = CuteBlue,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(
+                text = "Waiting for data...",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = CuteText.copy(alpha = 0.6f),
+                    fontWeight = FontWeight.Medium
+                )
+            )
+            
+            Text(
+                text = "Send data from your watch",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = CuteText.copy(alpha = 0.4f)
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun CuteLogCard(logs: List<String>, modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        color = CuteSurface,
+        shadowElevation = 2.dp
+    ) {
+        if (logs.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Default.List,
+                        contentDescription = null,
+                        tint = CuteText.copy(alpha = 0.3f),
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "No logs yet",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CuteText.copy(alpha = 0.4f)
+                    )
+                }
+            }
+        } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(12.dp)
             ) {
-                items(logs) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                    ) {
-                        Text(
-                            text = it, 
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                    if (logs.lastIndex > logs.indexOf(it)) {
-                        HorizontalDivider(
-                            modifier = Modifier.fillMaxWidth(),
-                            thickness = 0.5.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant
-                        )
-                    }
-                }
-                if (logs.isEmpty()) {
-                    item {
-                        Text(
-                            text = "No logs yet", 
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.outline,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(24.dp)
-                                .wrapContentHeight()
-                        )
-                    }
+                items(logs) { log ->
+                    CuteLogItem(log = log, isLast = logs.last() == log)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CuteLogItem(log: String, isLast: Boolean) {
+    val logColor = when {
+        log.contains("Error", ignoreCase = true) || log.contains("Failed", ignoreCase = true) -> Color(0xFFFF5252)
+        log.contains("Success", ignoreCase = true) || log.contains("Verified", ignoreCase = true) -> CuteGreen
+        log.contains("Received", ignoreCase = true) || log.contains("started", ignoreCase = true) -> CuteBlue
+        else -> CuteText.copy(alpha = 0.7f)
+    }
+    
+    val icon = when {
+        log.contains("Error", ignoreCase = true) -> Icons.Default.Close
+        log.contains("Success", ignoreCase = true) -> Icons.Default.CheckCircle
+        log.contains("Received", ignoreCase = true) -> Icons.Default.Add
+        else -> Icons.Default.Info
+    }
+    
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = logColor.copy(alpha = 0.6f),
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = log,
+                style = MaterialTheme.typography.bodySmall,
+                color = logColor,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        if (!isLast) {
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 0.5.dp,
+                color = CutePurple.copy(alpha = 0.2f)
+            )
         }
     }
 }
