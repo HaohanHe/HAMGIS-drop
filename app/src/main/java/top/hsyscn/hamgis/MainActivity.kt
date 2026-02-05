@@ -18,6 +18,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,12 +34,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -795,15 +799,37 @@ fun CuteHttpScreen(
 
     // 动画状态
     val isRunning = serverState.contains("Running")
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    
+    // 增强的脉冲动画 - 呼吸灯效果
+    val infiniteTransition = rememberInfiniteTransition(label = "breathing")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.1f,
+        targetValue = 1.15f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = FastOutSlowInEasing),
+            animation = tween(1200, easing = EaseInOutSine),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "pulse"
+        label = "pulseScale"
+    )
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.6f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseAlpha"
+    )
+    
+    // 背景渐变流动动画
+    val gradientOffset by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(8000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "gradientFlow"
     )
 
     Column(
@@ -813,8 +839,9 @@ fun CuteHttpScreen(
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         CuteBackground,
-                        CutePinkLight.copy(alpha = 0.3f),
-                        CuteBlueLight.copy(alpha = 0.2f)
+                        CutePinkLight.copy(alpha = 0.3f + 0.1f * gradientOffset),
+                        CuteBlueLight.copy(alpha = 0.2f + 0.1f * (1 - gradientOffset)),
+                        CutePurpleLight.copy(alpha = 0.15f)
                     )
                 )
             )
@@ -829,6 +856,7 @@ fun CuteHttpScreen(
         CuteStatusCard(
             isRunning = isRunning,
             pulseScale = if (isRunning) pulseScale else 1f,
+            pulseAlpha = if (isRunning) pulseAlpha else 1f,
             serverState = serverState
         )
         
@@ -842,11 +870,28 @@ fun CuteHttpScreen(
             onHelp = onHelp
         )
         
-        // 数据预览区域
+        // 数据预览区域 - 增强的入场动画
         AnimatedVisibility(
             visible = receivedJson != null,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
+            enter = fadeIn(
+                animationSpec = tween(400, easing = EaseOutCubic)
+            ) + expandVertically(
+                animationSpec = tween(400, easing = EaseOutCubic)
+            ) + slideInVertically(
+                initialOffsetY = { it / 4 },
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessMedium
+                )
+            ),
+            exit = fadeOut(
+                animationSpec = tween(300)
+            ) + shrinkVertically(
+                animationSpec = tween(300)
+            ) + slideOutVertically(
+                targetOffsetY = { it / 4 },
+                animationSpec = tween(300)
+            )
         ) {
             Column {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -932,7 +977,7 @@ fun CuteHeader() {
                 modifier = Modifier.padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 装饰图标
+                // 装饰图标 - 添加摇摆动画
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -942,6 +987,30 @@ fun CuteHeader() {
                         fontSize = 24.sp
                     )
                     Spacer(modifier = Modifier.width(8.dp))
+                    
+                    // 图标摇摆动画
+                    val infiniteTransition = rememberInfiniteTransition(label = "headerIcon")
+                    val iconRotation by infiniteTransition.animateFloat(
+                        initialValue = -8f,
+                        targetValue = 8f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(2000, easing = EaseInOutSine),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "iconWiggle"
+                    )
+                    
+                    // 图标缩放呼吸
+                    val iconScale by infiniteTransition.animateFloat(
+                        initialValue = 1f,
+                        targetValue = 1.08f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(1500, easing = EaseInOutSine),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "iconScale"
+                    )
+                    
                     Surface(
                         shape = CircleShape,
                         color = CutePink.copy(alpha = 0.2f),
@@ -952,7 +1021,13 @@ fun CuteHeader() {
                                 imageVector = Icons.Default.LocationOn,
                                 contentDescription = null,
                                 tint = CutePink,
-                                modifier = Modifier.size(28.dp)
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .graphicsLayer {
+                                        rotationZ = iconRotation
+                                        scaleX = iconScale
+                                        scaleY = iconScale
+                                    }
                             )
                         }
                     }
@@ -988,6 +1063,7 @@ fun CuteHeader() {
 fun CuteStatusCard(
     isRunning: Boolean,
     pulseScale: Float,
+    pulseAlpha: Float,
     serverState: String
 ) {
     Surface(
@@ -1004,21 +1080,39 @@ fun CuteStatusCard(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // 状态指示器
+                // 增强的状态指示器 - 呼吸灯效果
                 Box(
                     modifier = Modifier
                         .size(16.dp)
-                        .scale(if (isRunning) pulseScale else 1f)
-                        .background(
-                            color = if (isRunning) CuteGreen else Color(0xFFFF5252),
-                            shape = CircleShape
+                        .scale(if (isRunning) pulseScale else 1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // 外圈光晕
+                    if (isRunning) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    color = CuteGreen.copy(alpha = pulseAlpha * 0.3f),
+                                    shape = CircleShape
+                                )
                         )
-                        .shadow(
-                            elevation = if (isRunning) 8.dp else 0.dp,
-                            shape = CircleShape,
-                            spotColor = if (isRunning) CuteGreen else Color.Transparent
-                        )
-                )
+                    }
+                    // 核心圆点
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .background(
+                                color = if (isRunning) CuteGreen.copy(alpha = pulseAlpha) else Color(0xFFFF5252),
+                                shape = CircleShape
+                            )
+                            .shadow(
+                                elevation = if (isRunning) (8.dp * pulseAlpha) else 0.dp,
+                                shape = CircleShape,
+                                spotColor = if (isRunning) CuteGreen else Color.Transparent
+                            )
+                    )
+                }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
@@ -1036,7 +1130,16 @@ fun CuteStatusCard(
                 }
             }
             
-            // 状态图标
+            // 状态图标 - 添加入场动画
+            val iconScale by animateFloatAsState(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                ),
+                label = "iconScale"
+            )
+            
             Surface(
                 shape = RoundedCornerShape(12.dp),
                 color = if (isRunning) CuteGreen.copy(alpha = 0.15f) else Color(0xFFFF5252).copy(alpha = 0.15f)
@@ -1045,7 +1148,9 @@ fun CuteStatusCard(
                     imageVector = if (isRunning) Icons.Default.CheckCircle else Icons.Default.Close,
                     contentDescription = null,
                     tint = if (isRunning) CuteGreen else Color(0xFFFF5252),
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .scale(iconScale)
                 )
             }
         }
@@ -1102,10 +1207,36 @@ fun CuteActionButton(
     modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
+    // 使用 Spring 动画实现弹性缩放效果
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.95f else 1f,
-        animationSpec = tween(100),
-        label = "scale"
+        targetValue = if (isPressed) 0.92f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "springScale"
+    )
+    
+    // 添加图标旋转动画
+    val infiniteTransition = rememberInfiniteTransition(label = "iconWiggle")
+    val iconRotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "iconRotation"
+    )
+    
+    // 悬停/按压时的额外动画状态
+    val animatedElevation by animateFloatAsState(
+        targetValue = if (isPressed) 2f else 4f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "elevation"
     )
     
     Surface(
@@ -1116,7 +1247,7 @@ fun CuteActionButton(
         enabled = enabled,
         shape = RoundedCornerShape(14.dp),
         color = if (enabled) color else color.copy(alpha = 0.3f),
-        shadowElevation = if (enabled) 4.dp else 0.dp,
+        shadowElevation = if (enabled) animatedElevation.dp else 0.dp,
         modifier = modifier
             .scale(scale)
             .height(48.dp)
@@ -1130,7 +1261,11 @@ fun CuteActionButton(
                 imageVector = icon,
                 contentDescription = null,
                 tint = Color.White,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(20.dp)
+                    .graphicsLayer {
+                        rotationZ = if (isPressed) 15f else 0f
+                    }
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
@@ -1143,7 +1278,7 @@ fun CuteActionButton(
     
     LaunchedEffect(isPressed) {
         if (isPressed) {
-            kotlinx.coroutines.delay(100)
+            kotlinx.coroutines.delay(150)
             isPressed = false
         }
     }
@@ -1354,10 +1489,24 @@ fun CuteExportButton(
     modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
+    // Spring 弹性动画
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.95f else 1f,
-        animationSpec = tween(100),
-        label = "scale"
+        targetValue = if (isPressed) 0.9f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioHighBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "exportSpringScale"
+    )
+    
+    // 图标摇摆动画
+    val iconRotation by animateFloatAsState(
+        targetValue = if (isPressed) -10f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "iconWiggle"
     )
     
     Button(
@@ -1377,7 +1526,11 @@ fun CuteExportButton(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(18.dp)
+            modifier = Modifier
+                .size(18.dp)
+                .graphicsLayer {
+                    rotationZ = iconRotation
+                }
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
@@ -1389,7 +1542,7 @@ fun CuteExportButton(
     
     LaunchedEffect(isPressed) {
         if (isPressed) {
-            kotlinx.coroutines.delay(100)
+            kotlinx.coroutines.delay(150)
             isPressed = false
         }
     }
@@ -1406,24 +1559,84 @@ fun CuteEmptyState() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 等待动画
-            val infiniteTransition = rememberInfiniteTransition(label = "float")
-            val offsetY by infiniteTransition.animateFloat(
+            // 灵动的云朵浮动动画 - 上下浮动+左右轻微摆动
+            val infiniteTransition = rememberInfiniteTransition(label = "cloudFloat")
+            
+            // 垂直浮动 - 使用正弦波模拟自然浮动
+            val floatY by infiniteTransition.animateFloat(
                 initialValue = 0f,
-                targetValue = -10f,
+                targetValue = 1f,
                 animationSpec = infiniteRepeatable(
-                    animation = tween(1500, easing = FastOutSlowInEasing),
-                    repeatMode = RepeatMode.Reverse
+                    animation = tween(3000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart
                 ),
-                label = "float"
+                label = "floatY"
             )
             
+            // 水平摆动 - 与垂直不同步，产生更自然的效果
+            val floatX by infiniteTransition.animateFloat(
+                initialValue = 0f,
+                targetValue = 1f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(4200, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart
+                ),
+                label = "floatX"
+            )
+            
+            // 旋转摇摆 - 轻微的角度变化
+            val rotation by infiniteTransition.animateFloat(
+                initialValue = -5f,
+                targetValue = 5f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(2500, easing = EaseInOutSine),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "rotation"
+            )
+            
+            // 缩放呼吸效果
+            val scale by infiniteTransition.animateFloat(
+                initialValue = 1f,
+                targetValue = 1.05f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(2000, easing = EaseInOutSine),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "scale"
+            )
+            
+            // 计算偏移量 - 使用正弦波
+            val offsetY = kotlin.math.sin(floatY * 2 * kotlin.math.PI) * 12f
+            val offsetX = kotlin.math.sin(floatX * 2 * kotlin.math.PI) * 6f
+            
             Box(
-                modifier = Modifier.offset(y = offsetY.dp)
+                modifier = Modifier
+                    .offset(x = offsetX.dp, y = offsetY.dp)
+                    .graphicsLayer {
+                        rotationZ = rotation
+                        scaleX = scale
+                        scaleY = scale
+                    }
             ) {
+                // 外层光晕
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .background(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    CuteBlueLight.copy(alpha = 0.5f),
+                                    CuteBlueLight.copy(alpha = 0f)
+                                )
+                            ),
+                            shape = CircleShape
+                        )
+                )
+                
                 Surface(
                     shape = CircleShape,
-                    color = CuteBlueLight.copy(alpha = 0.4f),
+                    color = CuteBlueLight.copy(alpha = 0.5f),
                     modifier = Modifier.size(80.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
@@ -1437,12 +1650,23 @@ fun CuteEmptyState() {
                 }
             }
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+            
+            // 文字淡入淡出效果
+            val textAlpha by infiniteTransition.animateFloat(
+                initialValue = 0.7f,
+                targetValue = 1f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1500, easing = EaseInOutSine),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "textAlpha"
+            )
             
             Text(
                 text = "Waiting for data...",
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    color = Color.White,
+                    color = Color.White.copy(alpha = textAlpha),
                     fontWeight = FontWeight.Medium
                 )
             )
@@ -1450,7 +1674,7 @@ fun CuteEmptyState() {
             Text(
                 text = "Send data from your watch",
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = Color.White
+                    color = Color.White.copy(alpha = 0.8f)
                 )
             )
         }
@@ -1492,8 +1716,8 @@ fun CuteLogCard(logs: List<String>, modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(12.dp)
             ) {
-                items(logs) { log ->
-                    CuteLogItem(log = log, isLast = logs.last() == log)
+                itemsIndexed(logs) { index, log ->
+                    CuteLogItem(log = log, isLast = logs.last() == log, index = index)
                 }
             }
         }
@@ -1501,7 +1725,7 @@ fun CuteLogCard(logs: List<String>, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CuteLogItem(log: String, isLast: Boolean) {
+fun CuteLogItem(log: String, isLast: Boolean, index: Int = 0) {
     val logColor = when {
         log.contains("Error", ignoreCase = true) || log.contains("Failed", ignoreCase = true) -> Color(0xFFFF5252)
         log.contains("Success", ignoreCase = true) || log.contains("Verified", ignoreCase = true) -> CuteGreen
@@ -1516,7 +1740,33 @@ fun CuteLogItem(log: String, isLast: Boolean) {
         else -> Icons.Default.Info
     }
     
-    Column {
+    // 入场动画
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(index * 50L)
+        visible = true
+    }
+    
+    val alpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(300, easing = EaseOutCubic),
+        label = "logAlpha"
+    )
+    
+    val slideOffset by animateFloatAsState(
+        targetValue = if (visible) 0f else -20f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "logSlide"
+    )
+    
+    Column(
+        modifier = Modifier
+            .alpha(alpha)
+            .offset(y = slideOffset.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
