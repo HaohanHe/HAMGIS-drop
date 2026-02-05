@@ -22,10 +22,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Close
@@ -144,7 +144,7 @@ class MainActivity : ComponentActivity() {
     private fun startExportProcess(type: String) {
         val jsonStr = receivedJsonData ?: return
         
-        Log.d("MainActivity", "startExportProcess called, type: $type, hasData: ${jsonStr != null}")
+        Log.d("MainActivity", "startExportProcess called, type: $type, hasData: true")
         
         try {
             val content = when (type) {
@@ -924,7 +924,7 @@ fun CuteHttpScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.List,
+                imageVector = Icons.AutoMirrored.Filled.List,
                 contentDescription = null,
                 tint = CutePink,
                 modifier = Modifier.size(20.dp)
@@ -1425,7 +1425,7 @@ fun CuteDataCard(
             ) {
                 CuteExportButton(
                     text = "CSV",
-                    icon = Icons.Default.List,
+                    icon = Icons.AutoMirrored.Filled.List,
                     color = CuteGreen,
                     onClick = onSaveCsv,
                     modifier = Modifier.weight(1f)
@@ -1697,7 +1697,7 @@ fun CuteLogCard(logs: List<String>, modifier: Modifier = Modifier) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
-                        imageVector = Icons.Default.List,
+                        imageVector = Icons.AutoMirrored.Filled.List,
                         contentDescription = null,
                         tint = CuteText.copy(alpha = 0.3f),
                         modifier = Modifier.size(48.dp)

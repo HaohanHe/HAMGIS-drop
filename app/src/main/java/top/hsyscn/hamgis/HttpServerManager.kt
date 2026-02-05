@@ -78,36 +78,31 @@ class HttpServerManager(private val context: Context) : NanoHTTPD(8888) {
                     return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, "Read Error: ${readException.message}")
                 }
                 
-                if (content != null) {
-                    // It might be a JSON string like {"postData": "..."}
-                    // This is how our Side Service sends it: body: JSON.stringify({ postData: data })
-                    try {
-                        if (content.trim().startsWith("{")) {
-                            val json = org.json.JSONObject(content)
-                            if (json.has("postData")) {
-                                val actualData = json.optString("postData")
-                                if (actualData.isNotEmpty()) {
-                                     log("Data Received via JSON wrapper (${actualData.length} chars)")
-                                     Log.d("HttpServer", "Received data preview: ${actualData.take(100)}...")
-                                     onDataReceived?.invoke(actualData)
-                                     return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "OK")
-                                }
+                // It might be a JSON string like {"postData": "..."}
+                // This is how our Side Service sends it: body: JSON.stringify({ postData: data })
+                try {
+                    if (content.trim().startsWith("{")) {
+                        val json = org.json.JSONObject(content)
+                        if (json.has("postData")) {
+                            val actualData = json.optString("postData")
+                            if (actualData.isNotEmpty()) {
+                                 log("Data Received via JSON wrapper (${actualData.length} chars)")
+                                 Log.d("HttpServer", "Received data preview: ${actualData.take(100)}...")
+                                 onDataReceived?.invoke(actualData)
+                                 return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "OK")
                             }
                         }
-                    } catch(e: Exception) {
-                        log("JSON wrapper parse fail: ${e.message}")
-                        Log.e("HttpServer", "JSON parse exception", e)
                     }
-                    
-                    // If it's not wrapped or parsing failed, treat raw content as data
-                    log("Data Received Raw (${content.length} chars)")
-                    Log.d("HttpServer", "Received raw data preview: ${content.take(100)}...")
-                    onDataReceived?.invoke(content)
-                    return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "OK")
-                } else {
-                    Log.e("HttpServer", "Empty body received!")
-                    return newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_PLAINTEXT, "Empty Body")
+                } catch(e: Exception) {
+                    log("JSON wrapper parse fail: ${e.message}")
+                    Log.e("HttpServer", "JSON parse exception", e)
                 }
+                
+                // If it's not wrapped or parsing failed, treat raw content as data
+                log("Data Received Raw (${content.length} chars)")
+                Log.d("HttpServer", "Received raw data preview: ${content.take(100)}...")
+                onDataReceived?.invoke(content)
+                return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "OK")
             } catch (e: Exception) {
                 Log.e("HttpServer", "General exception in serve: ${e.message}", e)
                 e.printStackTrace()
