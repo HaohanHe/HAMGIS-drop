@@ -2,15 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <!-- Android 12+ (API 31+) permissions -->
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <!-- Location is needed for legacy scanning, but also good to have -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- HTTP Server only needs INTERNET permission -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -33,16 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <!-- HelpActivity (暂时注释掉，因为文件不存在) -->
-        <!-- 
-        <activity
-            android:name=".HelpActivity"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.HAMGIS">
-        </activity>
-        -->
     </application>
 
 </manifest>
