@@ -919,6 +919,7 @@ fun CuteHttpScreen(
         }
         
         // 日志标题
+        val logTitleColor = MaterialTheme.colorScheme.onBackground
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -934,7 +935,7 @@ fun CuteHttpScreen(
                 "Logs", 
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = logTitleColor
                 )
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -1663,10 +1664,13 @@ fun CuteEmptyState() {
                 label = "textAlpha"
             )
             
+            // 根据主题自动调整文字颜色
+            val textColor = MaterialTheme.colorScheme.onBackground
+            
             Text(
                 text = "Waiting for data...",
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    color = Color.White.copy(alpha = textAlpha),
+                    color = textColor.copy(alpha = textAlpha),
                     fontWeight = FontWeight.Medium
                 )
             )
@@ -1674,7 +1678,7 @@ fun CuteEmptyState() {
             Text(
                 text = "Send data from your watch",
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = Color.White.copy(alpha = 0.8f)
+                    color = textColor.copy(alpha = 0.7f)
                 )
             )
         }
