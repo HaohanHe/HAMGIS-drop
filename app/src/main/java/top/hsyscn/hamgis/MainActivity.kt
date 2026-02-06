@@ -16,9 +16,12 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,6 +33,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -832,7 +836,7 @@ fun CuteHttpScreen(
         label = "gradientFlow"
     )
 
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(
@@ -848,53 +852,57 @@ fun CuteHttpScreen(
             .padding(16.dp)
     ) {
         // 可爱的标题区域
-        CuteHeader()
+        item { CuteHeader() }
         
-        Spacer(modifier = Modifier.height(16.dp))
+        item { Spacer(modifier = Modifier.height(16.dp)) }
         
         // 状态卡片
-        CuteStatusCard(
-            isRunning = isRunning,
-            pulseScale = if (isRunning) pulseScale else 1f,
-            pulseAlpha = if (isRunning) pulseAlpha else 1f,
-            serverState = serverState
-        )
+        item {
+            CuteStatusCard(
+                isRunning = isRunning,
+                pulseScale = if (isRunning) pulseScale else 1f,
+                pulseAlpha = if (isRunning) pulseAlpha else 1f,
+                serverState = serverState
+            )
+        }
         
-        Spacer(modifier = Modifier.height(16.dp))
+        item { Spacer(modifier = Modifier.height(16.dp)) }
 
         // 服务器控制按钮
-        CuteControlButtons(
-            isRunning = isRunning,
-            onStart = onStart,
-            onStop = onStop,
-            onHelp = onHelp
-        )
+        item {
+            CuteControlButtons(
+                isRunning = isRunning,
+                onStart = onStart,
+                onStop = onStop,
+                onHelp = onHelp
+            )
+        }
         
         // 数据预览区域 - 增强的入场动画
-        AnimatedVisibility(
-            visible = receivedJson != null,
-            enter = fadeIn(
-                animationSpec = tween(400, easing = EaseOutCubic)
-            ) + expandVertically(
-                animationSpec = tween(400, easing = EaseOutCubic)
-            ) + slideInVertically(
-                initialOffsetY = { it / 4 },
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessMedium
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+        item {
+            AnimatedVisibility(
+                visible = receivedJson != null,
+                enter = fadeIn(
+                    animationSpec = tween(400, easing = EaseOutCubic)
+                ) + expandVertically(
+                    animationSpec = tween(400, easing = EaseOutCubic)
+                ) + slideInVertically(
+                    initialOffsetY = { it / 4 },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    )
+                ),
+                exit = fadeOut(
+                    animationSpec = tween(300)
+                ) + shrinkVertically(
+                    animationSpec = tween(300)
+                ) + slideOutVertically(
+                    targetOffsetY = { it / 4 },
+                    animationSpec = tween(300)
                 )
-            ),
-            exit = fadeOut(
-                animationSpec = tween(300)
-            ) + shrinkVertically(
-                animationSpec = tween(300)
-            ) + slideOutVertically(
-                targetOffsetY = { it / 4 },
-                animationSpec = tween(300)
-            )
-        ) {
-            Column {
-                Spacer(modifier = Modifier.height(16.dp))
+            ) {
                 CuteDataCard(
                     receivedJson = receivedJson,
                     context = context,
@@ -906,59 +914,67 @@ fun CuteHttpScreen(
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
         
         // 空状态提示
-        AnimatedVisibility(
-            visible = receivedJson == null,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            CuteEmptyState()
-        }
-        
-        // 日志标题
-        val logTitleColor = MaterialTheme.colorScheme.onBackground
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.List,
-                contentDescription = null,
-                tint = CutePink,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                "Logs", 
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = logTitleColor
-                )
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = CutePurple.copy(alpha = 0.2f)
+        item {
+            AnimatedVisibility(
+                visible = receivedJson == null,
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
-                Text(
-                    "${logs.size} entries", 
-                    style = MaterialTheme.typography.bodySmall,
-                    color = CutePurple,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                )
+                CuteEmptyState()
             }
         }
         
-        Spacer(modifier = Modifier.height(8.dp))
+        item { Spacer(modifier = Modifier.height(16.dp)) }
         
-        // 日志区域
-        CuteLogCard(
-            logs = logs,
-            modifier = Modifier.weight(1f)
-        )
+        // 日志标题
+        item {
+            val logTitleColor = MaterialTheme.colorScheme.onBackground
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.List,
+                    contentDescription = null,
+                    tint = CutePink,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    "Logs", 
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = logTitleColor
+                    )
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = CutePurple.copy(alpha = 0.2f)
+                ) {
+                    Text(
+                        "${logs.size} entries", 
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CutePurple,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+        }
+        
+        item { Spacer(modifier = Modifier.height(8.dp)) }
+        
+        // 日志区域 - 固定高度，内部可滚动
+        item {
+            CuteLogCard(
+                logs = logs,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 150.dp, max = 250.dp)
+            )
+        }
     }
 }
 
@@ -1408,9 +1424,9 @@ fun CuteDataCard(
                 }
             }
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             
-            // 导出按钮
+            // 导出按钮 - 2x2 网格布局
             Text(
                 text = "Export Options",
                 style = MaterialTheme.typography.bodySmall.copy(
@@ -1419,44 +1435,43 @@ fun CuteDataCard(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             
-            // 第一行导出按钮
-            Row(
+            // 2x2 网格布局
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                CuteExportButton(
-                    text = "CSV",
-                    icon = Icons.AutoMirrored.Filled.List,
-                    color = CuteGreen,
-                    onClick = onSaveCsv,
-                    modifier = Modifier.weight(1f)
-                )
-                CuteExportButton(
-                    text = "GeoJSON",
-                    icon = Icons.Default.LocationOn,
-                    color = CuteBlue,
-                    onClick = onSaveGeoJson,
-                    modifier = Modifier.weight(1f)
-                )
-                CuteExportButton(
-                    text = "KML",
-                    icon = Icons.Default.LocationOn,
-                    color = CutePurple,
-                    onClick = onSaveKml,
-                    modifier = Modifier.weight(1f)
-                )
+                // 导出按钮 - 统一样式
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CuteExportButton(
+                        text = "CSV",
+                        onClick = onSaveCsv,
+                        modifier = Modifier.weight(1f)
+                    )
+                    CuteExportButton(
+                        text = "GeoJSON",
+                        onClick = onSaveGeoJson,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CuteExportButton(
+                        text = "KML",
+                        onClick = onSaveKml,
+                        modifier = Modifier.weight(1f)
+                    )
+                    CuteExportButton(
+                        text = "JSON",
+                        onClick = onSaveJson,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // JSON 导出按钮
-            CuteExportButton(
-                text = "Save as JSON",
-                icon = Icons.Default.Info,
-                color = CutePink,
-                onClick = onSaveJson,
-                modifier = Modifier.fillMaxWidth()
-            )
             
             Spacer(modifier = Modifier.height(12.dp))
             
@@ -1484,8 +1499,6 @@ fun CuteDataCard(
 @Composable
 fun CuteExportButton(
     text: String,
-    icon: ImageVector,
-    color: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -1510,6 +1523,7 @@ fun CuteExportButton(
         label = "iconWiggle"
     )
     
+    // 统一使用粉色主题色
     Button(
         onClick = {
             isPressed = true
@@ -1520,12 +1534,13 @@ fun CuteExportButton(
             .height(44.dp),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = color
+            containerColor = CutePink
         ),
         contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
+        // 统一使用下载图标
         Icon(
-            imageVector = icon,
+            imageVector = Icons.Default.KeyboardArrowDown,
             contentDescription = null,
             modifier = Modifier
                 .size(18.dp)
@@ -1554,108 +1569,64 @@ fun CuteEmptyState() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 24.dp),
+            .padding(vertical = 12.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
-            // 灵动的云朵浮动动画 - 上下浮动+左右轻微摆动
+            // 简化的浮动动画
             val infiniteTransition = rememberInfiniteTransition(label = "cloudFloat")
             
-            // 垂直浮动 - 使用正弦波模拟自然浮动
             val floatY by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = 1f,
                 animationSpec = infiniteRepeatable(
-                    animation = tween(3000, easing = LinearEasing),
+                    animation = tween(2000, easing = LinearEasing),
                     repeatMode = RepeatMode.Restart
                 ),
                 label = "floatY"
             )
             
-            // 水平摆动 - 与垂直不同步，产生更自然的效果
-            val floatX by infiniteTransition.animateFloat(
-                initialValue = 0f,
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(4200, easing = LinearEasing),
-                    repeatMode = RepeatMode.Restart
-                ),
-                label = "floatX"
-            )
-            
-            // 旋转摇摆 - 轻微的角度变化
-            val rotation by infiniteTransition.animateFloat(
-                initialValue = -5f,
-                targetValue = 5f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(2500, easing = EaseInOutSine),
-                    repeatMode = RepeatMode.Reverse
-                ),
-                label = "rotation"
-            )
-            
-            // 缩放呼吸效果
             val scale by infiniteTransition.animateFloat(
                 initialValue = 1f,
                 targetValue = 1.05f,
                 animationSpec = infiniteRepeatable(
-                    animation = tween(2000, easing = EaseInOutSine),
+                    animation = tween(1500, easing = EaseInOutSine),
                     repeatMode = RepeatMode.Reverse
                 ),
                 label = "scale"
             )
             
-            // 计算偏移量 - 使用正弦波
-            val offsetY = kotlin.math.sin(floatY * 2 * kotlin.math.PI) * 12f
-            val offsetX = kotlin.math.sin(floatX * 2 * kotlin.math.PI) * 6f
+            val offsetY = kotlin.math.sin(floatY * 2 * kotlin.math.PI) * 6f
             
-            Box(
+            Surface(
+                shape = CircleShape,
+                color = CuteBlueLight.copy(alpha = 0.5f),
                 modifier = Modifier
-                    .offset(x = offsetX.dp, y = offsetY.dp)
+                    .size(48.dp)
+                    .offset(y = offsetY.dp)
                     .graphicsLayer {
-                        rotationZ = rotation
                         scaleX = scale
                         scaleY = scale
                     }
             ) {
-                // 外层光晕
-                Box(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    CuteBlueLight.copy(alpha = 0.5f),
-                                    CuteBlueLight.copy(alpha = 0f)
-                                )
-                            ),
-                            shape = CircleShape
-                        )
-                )
-                
-                Surface(
-                    shape = CircleShape,
-                    color = CuteBlueLight.copy(alpha = 0.5f),
-                    modifier = Modifier.size(80.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = null,
-                            tint = CuteBlue,
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        tint = CuteBlue,
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             }
             
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             
             // 文字淡入淡出效果
             val textAlpha by infiniteTransition.animateFloat(
-                initialValue = 0.7f,
+                initialValue = 0.6f,
                 targetValue = 1f,
                 animationSpec = infiniteRepeatable(
                     animation = tween(1500, easing = EaseInOutSine),
@@ -1664,23 +1635,23 @@ fun CuteEmptyState() {
                 label = "textAlpha"
             )
             
-            // 根据主题自动调整文字颜色
             val textColor = MaterialTheme.colorScheme.onBackground
             
-            Text(
-                text = "Waiting for data...",
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    color = textColor.copy(alpha = textAlpha),
-                    fontWeight = FontWeight.Medium
+            Column {
+                Text(
+                    text = "Waiting for data...",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = textColor.copy(alpha = textAlpha),
+                        fontWeight = FontWeight.Medium
+                    )
                 )
-            )
-            
-            Text(
-                text = "Send data from your watch",
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = textColor.copy(alpha = 0.7f)
+                Text(
+                    text = "Send data from your watch",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = textColor.copy(alpha = 0.6f)
+                    )
                 )
-            )
+            }
         }
     }
 }
