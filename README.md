@@ -105,8 +105,7 @@ app/
 
 如果您有任何问题或建议，欢迎通过以下方式联系我们：
 
-- GitHub：https://github.com/yourusername/hamgis-drop
-- 邮件：your.email@example.com
+- 邮件：bugreport@hsyscn.top
 
 ---
 
@@ -217,8 +216,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 If you have any questions or suggestions, please feel free to contact us through:
 
-- GitHub: https://github.com/yourusername/hamgis-drop
-- Email: your.email@example.com
+- Email: bugreport@hsyscn.top
 
 ---
 
@@ -329,5 +327,4 @@ app/
 
 質問や提案がある場合は、以下の方法でお問い合わせください：
 
-- GitHub：https://github.com/yourusername/hamgis-drop
-- メール：your.email@example.com
+- メール：bugreport@hsyscn.top
