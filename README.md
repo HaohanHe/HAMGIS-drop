@@ -21,18 +21,18 @@ HAMGIS-drop 是一个 Android 应用程序，用于接收来自 HAMGIS 手表端
 ## 使用说明
 
 ### 1. 启动应用
-- 安装完成后，在设备上找到 "HAMGIS レシーバー" 应用并打开
+- 安装完成后，在设备上找到 "HAMGIS" 应用并打开
 
 ### 2. 接收数据
 
 #### HTTP 方式
-- 点击 "サーバー起動" 按钮启动 HTTP 服务器
+- 点击 "start" 按钮启动 HTTP 服务器
 - 确保手表和手机连接到同一局域网
 - 在手表端选择 "导出到 HTTP" 选项
 - 手表会自动搜索并连接到手机的 HTTP 服务器
 - 数据传输完成后，应用会显示 "数据已接收！"
 
-#### BLE 方式
+#### BLE 方式（已经弃用）
 - 确保手机蓝牙已开启
 - 在手表端选择 "导出到 BLE" 选项
 - 手机会自动搜索并连接到手表
@@ -105,8 +105,7 @@ app/
 
 如果您有任何问题或建议，欢迎通过以下方式联系我们：
 
-- GitHub：https://github.com/yourusername/hamgis-drop
-- 邮件：your.email@example.com
+- 邮件：bugreport@hsyscn.top
 
 ---
 
@@ -217,8 +216,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 If you have any questions or suggestions, please feel free to contact us through:
 
-- GitHub: https://github.com/yourusername/hamgis-drop
-- Email: your.email@example.com
+- Email: bugreport@hsyscn.top
 
 ---
 
@@ -329,5 +327,4 @@ app/
 
 質問や提案がある場合は、以下の方法でお問い合わせください：
 
-- GitHub：https://github.com/yourusername/hamgis-drop
-- メール：your.email@example.com
+- メール：bugreport@hsyscn.top
