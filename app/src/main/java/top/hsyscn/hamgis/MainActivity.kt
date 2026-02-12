@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -175,7 +176,7 @@ class MainActivity : ComponentActivity() {
         } catch (e: Exception) {
             Log.e("MainActivity", "Export process failed: ${e.message}", e)
             e.printStackTrace()
-            Toast.makeText(this, "Convert Failed: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.msg_convert_failed, e.message), Toast.LENGTH_LONG).show()
         }
     }
     
@@ -752,10 +753,10 @@ class MainActivity : ComponentActivity() {
                     writer.write(content)
                 }
             }
-            Toast.makeText(this, "File Saved Successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.msg_file_saved), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Save Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.msg_save_failed, e.message), Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -802,7 +803,7 @@ fun CuteHttpScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
 
     // 动画状态
-    val isRunning = serverState.contains("Running")
+    val isRunning = serverState == context.getString(R.string.status_running)
     
     // 增强的脉冲动画 - 呼吸灯效果
     val infiniteTransition = rememberInfiniteTransition(label = "breathing")
@@ -943,7 +944,7 @@ fun CuteHttpScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    "Logs", 
+                    stringResource(R.string.label_logs), 
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = logTitleColor
@@ -955,7 +956,7 @@ fun CuteHttpScreen(
                     color = CutePurple.copy(alpha = 0.2f)
                 ) {
                     Text(
-                        "${logs.size} entries", 
+                        stringResource(R.string.log_entries, logs.size), 
                         style = MaterialTheme.typography.bodySmall,
                         color = CutePurple,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -1058,7 +1059,7 @@ fun CuteHeader() {
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 Text(
-                    text = "HAMGIS Receiver",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = CutePink
@@ -1066,7 +1067,7 @@ fun CuteHeader() {
                 )
                 
                 Text(
-                    text = "Cute Data Collector",
+                    text = stringResource(R.string.subtitle_collector),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = CutePurple
                     )
@@ -1133,7 +1134,7 @@ fun CuteStatusCard(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Server Status",
+                        text = stringResource(R.string.server_status),
                         style = MaterialTheme.typography.bodySmall,
                         color = CuteText.copy(alpha = 0.6f)
                     )
@@ -1186,7 +1187,7 @@ fun CuteControlButtons(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         CuteActionButton(
-            text = "Start",
+            text = stringResource(R.string.btn_start),
             icon = Icons.Default.PlayArrow,
             color = CuteGreen,
             onClick = onStart,
@@ -1195,7 +1196,7 @@ fun CuteControlButtons(
         )
         
         CuteActionButton(
-            text = "Stop",
+            text = stringResource(R.string.btn_stop),
             icon = Icons.Default.Close,
             color = Color(0xFFFF5252),
             onClick = onStop,
@@ -1204,7 +1205,7 @@ fun CuteControlButtons(
         )
         
         CuteActionButton(
-            text = "Help",
+            text = stringResource(R.string.btn_help),
             icon = Icons.Default.Info,
             color = CuteBlue,
             onClick = onHelp,
@@ -1327,7 +1328,7 @@ fun CuteDataCard(
                 // 检测项目类型
                 val recordType = root.optString("recordType", "")
                 isGISProject = recordType == "gis_project" || root.has("features")
-                projectType = if (isGISProject) "GIS Project" else "Area Measurement"
+                projectType = if (isGISProject) context.getString(R.string.type_gis_project) else context.getString(R.string.type_area_measurement)
                 
                 // 构建摘要信息
                 val sb = StringBuilder()
@@ -1337,23 +1338,23 @@ fun CuteDataCard(
                     val features = root.optJSONArray("features")
                     val featureCount = features?.length() ?: 0
                     val totalPoints = root.optInt("totalPoints", 0)
-                    sb.appendLine("Features: $featureCount")
-                    sb.appendLine("Total Points: $totalPoints")
+                    sb.appendLine(context.getString(R.string.label_features, featureCount))
+                    sb.appendLine(context.getString(R.string.label_total_points, totalPoints))
                 } else {
                     // 测面积项目显示面积信息
                     val areaObj = root.optJSONObject("area")
                     val areaMu = areaObj?.optDouble("mu", 0.0) ?: 0.0
                     val points = root.optJSONArray("points")
                     val pointCount = points?.length() ?: 0
-                    sb.appendLine("Area: ${String.format("%.2f", areaMu)} mu")
-                    sb.appendLine("Points: $pointCount")
+                    sb.appendLine(context.getString(R.string.label_area, areaMu))
+                    sb.appendLine(context.getString(R.string.label_points, pointCount))
                 }
                 
-                sb.appendLine("Size: $size bytes")
+                sb.appendLine(context.getString(R.string.label_size, size))
                 summaryText = sb.toString()
             }
         } catch (e: Exception) {
-            summaryText = "Error parsing JSON: ${e.message}"
+            summaryText = context.getString(R.string.error_parsing_json, e.message ?: "Unknown")
         }
     }
     
@@ -1385,7 +1386,7 @@ fun CuteDataCard(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Data Received!",
+                        text = stringResource(R.string.data_received),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
                             color = CutePink
@@ -1409,7 +1410,7 @@ fun CuteDataCard(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Project: $projectName",
+                        text = stringResource(R.string.label_project, projectName),
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = CuteText
@@ -1428,7 +1429,7 @@ fun CuteDataCard(
             
             // 导出按钮 - 2x2 网格布局
             Text(
-                text = "Export Options",
+                text = stringResource(R.string.export_options),
                 style = MaterialTheme.typography.bodySmall.copy(
                     color = CuteText.copy(alpha = 0.6f)
                 ),
@@ -1446,12 +1447,12 @@ fun CuteDataCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     CuteExportButton(
-                        text = "CSV",
+                        text = stringResource(R.string.format_csv),
                         onClick = onSaveCsv,
                         modifier = Modifier.weight(1f)
                     )
                     CuteExportButton(
-                        text = "GeoJSON",
+                        text = stringResource(R.string.format_geojson),
                         onClick = onSaveGeoJson,
                         modifier = Modifier.weight(1f)
                     )
@@ -1461,12 +1462,12 @@ fun CuteDataCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     CuteExportButton(
-                        text = "KML",
+                        text = stringResource(R.string.format_kml),
                         onClick = onSaveKml,
                         modifier = Modifier.weight(1f)
                     )
                     CuteExportButton(
-                        text = "JSON",
+                        text = stringResource(R.string.format_json),
                         onClick = onSaveJson,
                         modifier = Modifier.weight(1f)
                     )
@@ -1490,7 +1491,7 @@ fun CuteDataCard(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Discard Data")
+                Text(stringResource(R.string.btn_discard_data))
             }
         }
     }
@@ -1639,14 +1640,14 @@ fun CuteEmptyState() {
             
             Column {
                 Text(
-                    text = "Waiting for data...",
+                    text = stringResource(R.string.waiting_for_data),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = textColor.copy(alpha = textAlpha),
                         fontWeight = FontWeight.Medium
                     )
                 )
                 Text(
-                    text = "Send data from your watch",
+                    text = stringResource(R.string.send_from_watch),
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = textColor.copy(alpha = 0.6f)
                     )
@@ -1679,7 +1680,7 @@ fun CuteLogCard(logs: List<String>, modifier: Modifier = Modifier) {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "No logs yet",
+                        text = stringResource(R.string.no_logs_yet),
                         style = MaterialTheme.typography.bodyMedium,
                         color = CuteText.copy(alpha = 0.4f)
                     )

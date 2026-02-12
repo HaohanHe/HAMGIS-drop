@@ -1,39 +1,33 @@
 <resources>
     <string name="app_name">HAMGIS Receiver</string>
     <string name="title_receiver">HAMGIS Data Receiver</string>
-    <string name="status_label">Status: %s</string>
+    <string name="subtitle_collector">HAMGIS Collector</string>
+    
+    <!-- Status -->
+    <string name="server_status">Server Status</string>
+    <string name="status_running">Running</string>
+    <string name="status_stopped">Stopped</string>
     <string name="status_disconnected">Disconnected</string>
     <string name="status_connected">Connected to %s</string>
     <string name="status_unknown">Unknown</string>
+    
+    <!-- Buttons -->
+    <string name="btn_start">Start</string>
+    <string name="btn_stop">Stop</string>
+    <string name="btn_help">Help</string>
     <string name="btn_start_server">Start Server</string>
     <string name="btn_stop_server">Stop Server</string>
-    <string name="label_logs">Logs:</string>
-    <string name="msg_data_received">Data Received! Preparing Export...</string>
-    <string name="msg_file_saved">File Saved Successfully!</string>
-    <string name="msg_save_failed">Save Failed: %s</string>
-    <string name="err_convert">Error converting data: %s</string>
-    
-    <!-- Data Preview & Export -->
-    <string name="label_data_preview">Data Preview</string>
-    <string name="label_project_name">Project: %s</string>
-    <string name="label_data_size">Size: %s bytes</string>
-    <string name="btn_save_csv">Save as CSV</string>
-    <string name="btn_save_json">Save as JSON</string>
-    <string name="btn_save_geojson">Save as GeoJSON</string>
-    <string name="btn_save_kml">Save as KML</string>
-    <string name="btn_discard">Discard</string>
-    <string name="btn_help">User Guide</string>
-
-    <!-- CSV Headers -->
-    <string name="csv_header_summary">Name,Timestamp,Area (Mu),Points Count,Perimeter (m),Avg Altitude (m)</string>
-    <string name="csv_header_points">Index,Latitude,Longitude,Altitude (m),Time</string>
-    <string name="csv_section_points">--- Points Detail ---</string>
-    <string name="csv_unnamed">Unnamed</string>
     
     <!-- Logs -->
+    <string name="label_logs">Logs</string>
+    <string name="log_entries">%d entries</string>
+    <string name="no_logs_yet">No logs yet</string>
+    <string name="log_server_already_running">Server is already running</string>
+    <string name="log_server_started">HTTP Server Started on port %d</string>
+    <string name="log_server_start_failed">Server Start Failed: %s</string>
+    <string name="log_server_stopped">HTTP Server Stopped</string>
     <string name="log_ble_not_enabled">Bluetooth not enabled</string>
     <string name="log_adv_not_supported">BLE Advertising not supported</string>
-    <string name="log_server_stopped">Server stopped</string>
     <string name="log_gatt_failed">Unable to create GATT server</string>
     <string name="log_gatt_started">GATT Server started. Service added.</string>
     <string name="log_adv_started">Advertising started...</string>
@@ -49,6 +43,53 @@
     <string name="log_err_length_mismatch">Error: Length mismatch. Expected %1$d, got %2$d</string>
     <string name="log_crc_verified">CRC32 Verified! (%s)</string>
     <string name="log_crc_mismatch">CRC32 Mismatch! Expected %1$s, got %2$s</string>
+    
+    <!-- Data Card -->
+    <string name="data_received">Data Received!</string>
+    <string name="label_project">Project: %s</string>
+    <string name="label_features">Features: %d</string>
+    <string name="label_total_points">Total Points: %d</string>
+    <string name="label_area">Area: %.2f mu</string>
+    <string name="label_points">Points: %d</string>
+    <string name="label_size">Size: %d bytes</string>
+    <string name="label_data_preview">Data Preview</string>
+    <string name="label_project_name">Project: %s</string>
+    <string name="label_data_size">Size: %s bytes</string>
+    <string name="export_options">Export Options</string>
+    <string name="btn_discard_data">Discard Data</string>
+    <string name="btn_discard">Discard</string>
+    
+    <!-- Export formats -->
+    <string name="format_csv">CSV</string>
+    <string name="format_geojson">GeoJSON</string>
+    <string name="format_kml">KML</string>
+    <string name="format_json">JSON</string>
+    <string name="btn_save_csv">Save as CSV</string>
+    <string name="btn_save_json">Save as JSON</string>
+    <string name="btn_save_geojson">Save as GeoJSON</string>
+    <string name="btn_save_kml">Save as KML</string>
+    
+    <!-- Empty State -->
+    <string name="waiting_for_data">Waiting for data...</string>
+    <string name="send_from_watch">Send data from your watch</string>
+    
+    <!-- Project Types -->
+    <string name="type_gis_project">GIS Project</string>
+    <string name="type_area_measurement">Area Measurement</string>
+    
+    <!-- Messages -->
+    <string name="msg_data_received">Data Received! Preparing Export...</string>
+    <string name="msg_file_saved">File Saved Successfully!</string>
+    <string name="msg_save_failed">Save Failed: %s</string>
+    <string name="msg_convert_failed">Convert Failed: %s</string>
+    <string name="err_convert">Error converting data: %s</string>
+    <string name="error_parsing_json">Error parsing JSON: %s</string>
+    
+    <!-- CSV Headers -->
+    <string name="csv_header_summary">Name,Timestamp,Area (Mu),Points Count,Perimeter (m),Avg Altitude (m)</string>
+    <string name="csv_header_points">Index,Latitude,Longitude,Altitude (m),Time</string>
+    <string name="csv_section_points">--- Points Detail ---</string>
+    <string name="csv_unnamed">Unnamed</string>
     
     <!-- Help Page -->
     <string name="help_title">User Guide</string>

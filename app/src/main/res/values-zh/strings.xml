@@ -1,36 +1,33 @@
 <resources>
     <string name="app_name">HAMGIS 接收端</string>
     <string name="title_receiver">HAMGIS 数据接收端</string>
-    <string name="status_label">状态: %s</string>
+    <string name="subtitle_collector">HAMGIS 采集端</string>
+    
+    <!-- Status -->
+    <string name="server_status">服务器状态</string>
+    <string name="status_running">运行中</string>
+    <string name="status_stopped">已停止</string>
     <string name="status_disconnected">未连接</string>
     <string name="status_connected">已连接到 %s</string>
     <string name="status_unknown">未知设备</string>
+    
+    <!-- Buttons -->
+    <string name="btn_start">启动</string>
+    <string name="btn_stop">停止</string>
+    <string name="btn_help">帮助</string>
     <string name="btn_start_server">启动服务</string>
     <string name="btn_stop_server">停止服务</string>
-    <string name="label_logs">日志:</string>
-    <string name="msg_data_received">收到数据！准备导出...</string>
-    <string name="msg_file_saved">文件保存成功！</string>
-    <string name="msg_save_failed">保存失败: %s</string>
-    <string name="err_convert">数据转换错误: %s</string>
     
-    <string name="label_data_preview">数据预览</string>
-    <string name="label_project_name">项目: %s</string>
-    <string name="label_data_size">大小: %s 字节</string>
-    <string name="btn_save_csv">导出 CSV</string>
-    <string name="btn_save_json">导出 JSON</string>
-    <string name="btn_save_geojson">导出 GeoJSON</string>
-    <string name="btn_save_kml">导出 KML</string>
-    <string name="btn_discard">丢弃</string>
-    <string name="btn_help">使用说明</string>
-
-    <string name="csv_header_summary">名称,时间戳,面积(亩),点数,周长(米),平均海拔(米)</string>
-    <string name="csv_header_points">序号,纬度,经度,海拔(米),时间</string>
-    <string name="csv_section_points">--- 点位详情 ---</string>
-    <string name="csv_unnamed">未命名</string>
-    
+    <!-- Logs -->
+    <string name="label_logs">日志</string>
+    <string name="log_entries">%d 条记录</string>
+    <string name="no_logs_yet">暂无日志</string>
+    <string name="log_server_already_running">服务器已在运行</string>
+    <string name="log_server_started">HTTP服务器已启动，端口 %d</string>
+    <string name="log_server_start_failed">服务器启动失败: %s</string>
+    <string name="log_server_stopped">HTTP服务器已停止</string>
     <string name="log_ble_not_enabled">蓝牙未开启</string>
     <string name="log_adv_not_supported">不支持 BLE 广播</string>
-    <string name="log_server_stopped">服务已停止</string>
     <string name="log_gatt_failed">无法创建 GATT 服务端</string>
     <string name="log_gatt_started">GATT 服务端已启动</string>
     <string name="log_adv_started">广播已开始...</string>
@@ -46,6 +43,53 @@
     <string name="log_err_length_mismatch">错误: 长度不匹配。预期 %1$d, 实际 %2$d</string>
     <string name="log_crc_verified">CRC32 校验通过! (%s)</string>
     <string name="log_crc_mismatch">CRC32 校验失败! 预期 %1$s, 实际 %2$s</string>
+    
+    <!-- Data Card -->
+    <string name="data_received">数据已接收！</string>
+    <string name="label_project">项目: %s</string>
+    <string name="label_features">要素: %d</string>
+    <string name="label_total_points">总点数: %d</string>
+    <string name="label_area">面积: %.2f 亩</string>
+    <string name="label_points">点数: %d</string>
+    <string name="label_size">大小: %d 字节</string>
+    <string name="label_data_preview">数据预览</string>
+    <string name="label_project_name">项目: %s</string>
+    <string name="label_data_size">大小: %s 字节</string>
+    <string name="export_options">导出选项</string>
+    <string name="btn_discard_data">丢弃数据</string>
+    <string name="btn_discard">丢弃</string>
+    
+    <!-- Export formats -->
+    <string name="format_csv">CSV</string>
+    <string name="format_geojson">GeoJSON</string>
+    <string name="format_kml">KML</string>
+    <string name="format_json">JSON</string>
+    <string name="btn_save_csv">导出 CSV</string>
+    <string name="btn_save_json">导出 JSON</string>
+    <string name="btn_save_geojson">导出 GeoJSON</string>
+    <string name="btn_save_kml">导出 KML</string>
+    
+    <!-- Empty State -->
+    <string name="waiting_for_data">等待数据...</string>
+    <string name="send_from_watch">从手表发送数据</string>
+    
+    <!-- Project Types -->
+    <string name="type_gis_project">GIS项目</string>
+    <string name="type_area_measurement">面积测量</string>
+    
+    <!-- Messages -->
+    <string name="msg_data_received">收到数据！准备导出...</string>
+    <string name="msg_file_saved">文件保存成功！</string>
+    <string name="msg_save_failed">保存失败: %s</string>
+    <string name="msg_convert_failed">转换失败: %s</string>
+    <string name="err_convert">数据转换错误: %s</string>
+    <string name="error_parsing_json">JSON解析错误: %s</string>
+    
+    <!-- CSV Headers -->
+    <string name="csv_header_summary">名称,时间戳,面积(亩),点数,周长(米),平均海拔(米)</string>
+    <string name="csv_header_points">序号,纬度,经度,海拔(米),时间</string>
+    <string name="csv_section_points">--- 点位详情 ---</string>
+    <string name="csv_unnamed">未命名</string>
     
     <!-- Help Page -->
     <string name="help_title">使用说明</string>

@@ -12,33 +12,32 @@ class HttpServerManager(private val context: Context) : NanoHTTPD(8888) {
     private val _logMessages = MutableStateFlow<List<String>>(emptyList())
     val logMessages = _logMessages.asStateFlow()
 
-    private val _serverState = MutableStateFlow("Stopped")
+    private val _serverState = MutableStateFlow(context.getString(R.string.status_stopped))
     val serverState = _serverState.asStateFlow()
 
     var onDataReceived: ((String) -> Unit)? = null
 
     fun startServer() {
-        // 防呆：检查服务器是否已经在运行
         if (isAlive) {
-            log("Server is already running, cannot start again")
+            log(context.getString(R.string.log_server_already_running))
             return
         }
         
         try {
             start(30000, false)
-            _serverState.value = "Running on port 8888"
-            log("HTTP Server Started on port 8888")
+            _serverState.value = context.getString(R.string.status_running)
+            log(context.getString(R.string.log_server_started, 8888))
         } catch (e: IOException) {
-            _serverState.value = "Error: ${e.message}"
-            log("Server Start Failed: ${e.message}")
+            _serverState.value = context.getString(R.string.msg_save_failed, e.message ?: "Unknown")
+            log(context.getString(R.string.log_server_start_failed, e.message ?: "Unknown"))
             e.printStackTrace()
         }
     }
 
     fun stopServer() {
         stop()
-        _serverState.value = "Stopped"
-        log("HTTP Server Stopped")
+        _serverState.value = context.getString(R.string.status_stopped)
+        log(context.getString(R.string.log_server_stopped))
     }
 
     override fun serve(session: IHTTPSession): Response {
