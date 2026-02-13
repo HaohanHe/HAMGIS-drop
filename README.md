@@ -1,5 +1,5 @@
 # HAMGIS-drop
-
+[![HAMGIS Receiver](https://img.shields.io/badge/HAMGIS%20Receiver-中国大陆下载-FF6B9D?style=for-the-badge&logo=android)](https://hsyscn.top/HAMGIS.apk)
 ## 概述
 HAMGIS-drop 是一个 Android 应用程序，用于接收来自 HAMGIS 手表端的地理测量数据，并支持多种格式导出。该应用提供了 HTTP 服务器和 BLE 服务器两种数据接收方式，方便用户在不同场景下使用。
 
